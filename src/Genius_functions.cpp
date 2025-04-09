@@ -124,7 +124,7 @@ void sequence_generate(){
   void game_over(){
     game_over_screen();
     for(byte j=0; j<3; j++){
-      ledcWrite(0, 31);
+      ledcWrite(0, 110);
       for(byte i=0; i<4; i++){
         digitalWrite(ledPins[i], HIGH);
       }
