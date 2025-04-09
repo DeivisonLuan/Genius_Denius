@@ -53,9 +53,6 @@ void loop() {
   
   if((read_buttons() >= 0) && (read_buttons() < 4)){
     sequence_generate();
-    genius_turn(32);
-  }
-  /*
     for(byte i=0; i<=SequenceLength; i++){
       level = level + i; 
       genius_turn(level);
