@@ -1,7 +1,12 @@
 #include <Arduino.h>
 #include "Genius_functions.h"
+#include "Display.h"
 
 int geniusSequence[SequenceLength]= {0};
+
+// Estados para debounce
+bool lastButtonStates[4] = {HIGH, HIGH, HIGH, HIGH};
+unsigned long lastDebounceTimes[4] = {0, 0, 0, 0};
 
 // Gera a sequencia inteira e retorna o valor da jogada
 void sequence_generate(){
@@ -22,39 +27,59 @@ void sequence_generate(){
   
   // lê os botões pressionados
   int read_buttons(){
-    for(byte i=0; i<4; i++){
-      if(digitalRead(buttonPins[i]) == LOW){
-        blink_led(i);
-        return i;
+    bool algumPressionado = false;
+    for (int i = 0; i < 4; i++) {
+      int leituraAtual = digitalRead(buttonPins[i]);
+      // Se o estado mudou, atualiza o tempo
+      if (leituraAtual != lastButtonStates[i]) {
+        lastDebounceTimes[i] = millis();
+        lastButtonStates[i] = leituraAtual;
       }
+      // Se passou o tempo de debounce
+      if ((millis() - lastDebounceTimes[i]) > debounceDelay) {
+        if (leituraAtual == LOW) {  // Botão está pressionado
+          blink_led(i,32); //a velocidade do leval mais rapido
+          play_tone(i,32);
+          return i;
+        }
+      }
+      if (!algumPressionado) {
+        ledcWrite(0, 0);  // Silencia buzzer se nenhum botão estável pressionado
+      }
+      delay(10);  // Suaviza varredura
     }
-    
     return 5; //nenhum botão pressionado
   }
   
   //pisca o led por um tempo determinado
-  void blink_led(int value){
+  void blink_led(int value, int level){
+    int time_ms = frequence(level);
     digitalWrite(ledPins[value], HIGH);
-    delay(300);
+    delay(time_ms);
     digitalWrite(ledPins[value], LOW);
-    delay(300);
+    delay(time_ms);
   }
   
   //Jogada do Genius
   void genius_turn(int level){
+    play_screen('g');
+    delay(500);
     for(byte i=0; i<level; i++){
-      play_tone(geniusSequence[i]);
-      blink_led(geniusSequence[i]);
+      play_tone(geniusSequence[i], level);
+      blink_led(geniusSequence[i], level);
     }
   }
   
   //toca a nota referente a cada cor por um tempo determinado
-  void play_tone(int value){
-    ledcWrite(0, ColorTone[value]);
-    Serial.println(ColorTone[value]);  
-    delay(300);
+  void play_tone(int value, int level){
+    // Alternativa ao Tone/noTone:
+    ledcSetup(0, ColorTone[value], 8);  // freq de cada cor em Hz, resolução de 8 bits
+    ledcAttachPin(BuzzerPin, 0);  // Associa pino ao canal PWM
+    int time_ms = frequence(level);
+    ledcWrite(0, 255);  
+    delay(time_ms);
     ledcWrite(0, 0); // Para o som
-    delay(300);
+    delay(time_ms);
   }
   
   
@@ -63,27 +88,30 @@ void sequence_generate(){
     int pressed;
     bool error;
     unsigned long duration = 5000;
-  
+    play_screen('p');
+    delay(200);
+
     for(byte i=0; i<level; i++){
       error = true; //
       unsigned long startTime = millis();
-      for(byte i=0; (millis() - startTime < duration) && (error == true);i++){
+      for(byte j=0; (millis() - startTime < duration) && (error == true);j++){
         pressed = read_buttons();
         if(geniusSequence[i] == pressed){
           error = false;
-          Serial.println("erro de botão igual");
+          Serial.print("Acertou: ");
+          Serial.println(pressed);
         }
         else if(pressed == 5){
           error=true;
         }
         else{
-          Serial.println("erro else final");
+          Serial.print("Apertou errado: ");
           Serial.println(pressed);
           return false;
         }
       }
       if((millis() - startTime >= duration) && (error == true)){
-        Serial.println("erro if de passou o tempo");
+        Serial.println("passou o tempo");
         return false;
       }
       delay(200);
@@ -94,6 +122,7 @@ void sequence_generate(){
   
   //pisca todos os leds e toca uma nota grave 3 vezes
   void game_over(){
+    game_over_screen();
     for(byte j=0; j<3; j++){
       ledcWrite(0, 31);
       for(byte i=0; i<4; i++){
@@ -106,4 +135,11 @@ void sequence_generate(){
       }
       delay(500);
     }
+  }
+
+  //Velocidade do jogo: Freq_base = 1,2 Hz com acrescimo de 0,2 Hz a cada 5 jogadas
+  int frequence(int level){
+    float currentFreq = 1/(baseFreq + addFreq*(level/5));
+    int time_ms = int(currentFreq*1000);
+    return time_ms;
   }
