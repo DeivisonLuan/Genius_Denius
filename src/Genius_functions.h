@@ -6,8 +6,8 @@ const int buttonPins[] = {6, 19, 0, 5};
 const int ledPins[] = {7, 18, 1, 4};
 #define BuzzerPin 2
 
-#define baseFreq 1200
-#define addFreq 200
+#define baseFreq 1.5
+#define addFreq 0.285
 
 //Definição das notas para cada cor: Vermelho(R), Azul (B), verde (G), Amarelo(Y)
 const int ColorTone[] = {261, 440, 329, 392}; 

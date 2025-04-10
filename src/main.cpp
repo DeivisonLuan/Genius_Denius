@@ -30,6 +30,8 @@ void setup() {
   // Inicializa o I2C com seus pinos personalizados (SDA, SCL)
   Wire.begin(8, 9); // GPIO8 = SDA, GPIO9 = SCL
   Initial_screen();
+  delay(2000);
+  Start_screen();
 
   Serial.begin(115200);
 
@@ -48,23 +50,20 @@ void loop() {
       3. Compara-se o que o jogador reproduzir com a sequencia gerada no passo 1.
       4. Se errado, ele recebe o alerta de game over, e o jogo espera um toque em qualquer botão.
          se correto, ele volta ao passo 2. */
-  Start_screen();
   if((read_buttons() >= 0) && (read_buttons() < 4)){
-    int level=1;
+    int level;
     sequence_generate();
     for(byte i=0; i<=SequenceLength; i++){
-      level = level + i; 
+      level = i+1; 
       genius_turn(level);
       if(!compare_sequence(level)){
         game_over();
         i=SequenceLength+2;
-        level = 1;
+        Start_screen();
       }
-      else{level++;}
     }
   }
-  delay(1000);
 }
 
-/*Na jogada do genius ele precisa repetir a sequencia do começo e pedir os botões do começo.
+/*Jogo está ok, algumas travadas ainda acontecem se o botão não for pressionado no tempo correto.
 está gerando a sequencia, mostrando de quem é a jogada, a captura do botão tá ok*/

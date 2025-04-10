@@ -62,8 +62,9 @@ void sequence_generate(){
   
   //Jogada do Genius
   void genius_turn(int level){
+    Serial.println(" || Vez do genius!");
     play_screen('g');
-    delay(500);
+    //delay(200);
     for(byte i=0; i<level; i++){
       play_tone(geniusSequence[i], level);
       blink_led(geniusSequence[i], level);
@@ -87,9 +88,12 @@ void sequence_generate(){
   bool compare_sequence(int level){
     int pressed;
     bool error;
-    unsigned long duration = 5000;
+    unsigned long duration = 50000;
     play_screen('p');
-    delay(200);
+    //delay(200);
+    Serial.print("Nivel: ");
+    Serial.print(level);
+    Serial.print(": ");
 
     for(byte i=0; i<level; i++){
       error = true; //
@@ -99,22 +103,26 @@ void sequence_generate(){
         if(geniusSequence[i] == pressed){
           error = false;
           Serial.print("Acertou: ");
-          Serial.println(pressed);
+          Serial.print(pressed);
+          Serial.print(" | ");
         }
         else if(pressed == 5){
           error=true;
         }
         else{
-          Serial.print("Apertou errado: ");
+          Serial.print("Errou! Era ");
+          Serial.print(geniusSequence[i]);
+          Serial.print(" e apertou ");
           Serial.println(pressed);
+          Serial.print(" | ");
           return false;
         }
       }
       if((millis() - startTime >= duration) && (error == true)){
-        Serial.println("passou o tempo");
+        Serial.println(" Passou o tempo!");
         return false;
       }
-      delay(200);
+      //delay(200);
     }
   
     return true; //caso passe por todas as verificações só pode ser verdadeiro
