@@ -20,6 +20,6 @@ int read_buttons();
 void blink_led(int value, int level);
 void play_tone(int value, int level);
 void genius_turn(int level);
-void game_over();
+void game_over(int level);
 bool compare_sequence(int level);
 int frequence(int level);

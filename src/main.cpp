@@ -6,10 +6,10 @@
 volatile bool buttonFlags[4] = {false, false, false, false};
 
 // Prototipação das funções de interrupção
-void isrBotao0() { buttonFlags[0] = true; }
-void isrBotao1() { buttonFlags[1] = true; }
-void isrBotao2() { buttonFlags[2] = true; }
-void isrBotao3() { buttonFlags[3] = true; }
+void isrButton0() { buttonFlags[0] = true; }
+void isrButton1() { buttonFlags[1] = true; }
+void isrButton2() { buttonFlags[2] = true; }
+void isrButton3() { buttonFlags[3] = true; }
 
 //Configuração do Esp32
 void setup() {
@@ -21,10 +21,10 @@ void setup() {
   pinMode(BuzzerPin, OUTPUT);
 
   // Conecta interrupções
-  attachInterrupt(digitalPinToInterrupt(buttonPins[0]), isrBotao0, FALLING);
-  attachInterrupt(digitalPinToInterrupt(buttonPins[1]), isrBotao1, FALLING);
-  attachInterrupt(digitalPinToInterrupt(buttonPins[2]), isrBotao2, FALLING);
-  attachInterrupt(digitalPinToInterrupt(buttonPins[3]), isrBotao3, FALLING);
+  attachInterrupt(digitalPinToInterrupt(buttonPins[0]), isrButton0, FALLING);
+  attachInterrupt(digitalPinToInterrupt(buttonPins[1]), isrButton1, FALLING);
+  attachInterrupt(digitalPinToInterrupt(buttonPins[2]), isrButton2, FALLING);
+  attachInterrupt(digitalPinToInterrupt(buttonPins[3]), isrButton3, FALLING);
 
   //inicialização do display
   // Inicializa o I2C com seus pinos personalizados (SDA, SCL)
@@ -57,9 +57,12 @@ void loop() {
       level = i+1; 
       genius_turn(level);
       if(!compare_sequence(level)){
-        game_over();
+        game_over(level);
         i=SequenceLength+2;
         Start_screen();
+      }
+      if(level == SequenceLength){
+        Congratulation();
       }
     }
   }

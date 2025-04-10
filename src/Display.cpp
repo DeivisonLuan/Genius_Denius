@@ -1,4 +1,7 @@
 #include "Display.h"
+#include <string>
+
+using namespace std;
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
@@ -15,7 +18,7 @@ void Initial_screen(){
     define_display();
     
     const char* words[] = { "Genius", "Tech!"};
-    int textLen = 2;
+    int textLen = 3;
     int lineHeight = 8 * textLen;
 
     for (int i = 0; i < 2; i++) {
@@ -57,17 +60,18 @@ void Start_screen(){
 }
 
 //Tela que indica de quem é a vez
-void play_screen(char id){
+void play_screen(char id, int level){
     define_display();
 
+    String points = "Nivel: " + String(level);
     if(id == 'g'){
-        const char* words[] = { "Vez do", "Genius!"};
+        String words[] = { "Vez do", "Genius!", " ", points};
         int textLen = 2;
         int lineHeight = 8 * textLen;
 
         for (int i = 0; i < 2; i++) {
-            const char* word = words[i];
-            int textWidth = strlen(word) * 6 * textLen;
+            String word = words[i];
+            int textWidth = word.length() * 6 * textLen;
             int x = (SCREEN_WIDTH - textWidth) / 2;
             int y = i * lineHeight; 
 
@@ -79,13 +83,13 @@ void play_screen(char id){
         display.display();
     }
     else if(id =='p'){
-        const char* words[] = { "Sua", "Vez!"};
+        String words[] = { "Sua vez!", " ", points};
         int textLen = 2;
         int lineHeight = 8 * textLen;
     
-        for (int i = 0; i < 2; i++) {
-            const char* word = words[i];
-            int textWidth = strlen(word) * 6 * textLen;
+        for (int i = 0; i < 3; i++) {
+            String word = words[i];
+            int textWidth = word.length() * 6 * textLen;
             int x = (SCREEN_WIDTH - textWidth) / 2;
             int y = i * lineHeight; 
     
@@ -97,14 +101,37 @@ void play_screen(char id){
         display.display();
     }
 }
-void game_over_screen(){
+void game_over_screen(int level){
     define_display();
     
-    const char* words[] = { "Game", "Over!"};
+    String points = "Nivel: " + String(level);
+    String words[] = { "Game Over!", " ", " ", points};
     int textLen = 2;
     int lineHeight = 8 * textLen;
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 4; i++) {
+        String word = words[i];
+        int textWidth = word.length() * 6 * textLen;
+        int x = (SCREEN_WIDTH - textWidth) / 2;
+        int y = i * lineHeight; 
+
+        display.setTextSize(textLen);
+        display.setTextColor(SSD1306_WHITE);
+        display.setCursor(x, y);
+        display.println(word);
+    }
+
+    display.display();
+}
+
+void Congratulation(){
+    define_display();
+    
+    const char* words[] = { "Voce", "venceu!", "Parabéns!"};
+    int textLen = 2;
+    int lineHeight = 8 * textLen;
+
+    for (int i = 0; i < 3; i++) {
         const char* word = words[i];
         int textWidth = strlen(word) * 6 * textLen;
         int x = (SCREEN_WIDTH - textWidth) / 2;

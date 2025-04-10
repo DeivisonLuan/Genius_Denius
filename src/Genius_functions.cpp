@@ -63,7 +63,7 @@ void sequence_generate(){
   //Jogada do Genius
   void genius_turn(int level){
     Serial.println(" || Vez do genius!");
-    play_screen('g');
+    play_screen('g', level);
     //delay(200);
     for(byte i=0; i<level; i++){
       play_tone(geniusSequence[i], level);
@@ -89,7 +89,7 @@ void sequence_generate(){
     int pressed;
     bool error;
     unsigned long duration = 50000;
-    play_screen('p');
+    play_screen('p', level);
     //delay(200);
     Serial.print("Nivel: ");
     Serial.print(level);
@@ -129,8 +129,8 @@ void sequence_generate(){
   }
   
   //pisca todos os leds e toca uma nota grave 3 vezes
-  void game_over(){
-    game_over_screen();
+  void game_over(int level){
+    game_over_screen(level);
     for(byte j=0; j<3; j++){
       ledcWrite(0, 110);
       for(byte i=0; i<4; i++){

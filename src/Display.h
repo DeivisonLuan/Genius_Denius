@@ -14,5 +14,6 @@
 void define_display();
 void Initial_screen();
 void Start_screen();
-void play_screen(char id);
-void game_over_screen();
+void play_screen(char id, int level);
+void game_over_screen(int level);
+void Congratulation();
