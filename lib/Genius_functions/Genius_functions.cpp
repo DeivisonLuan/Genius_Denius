@@ -18,6 +18,7 @@ void sequence_generate(){
     for(byte i=0; i < SequenceLength; i++){
       geniusSequence[i] = random(0,4);
     }
+    Serial.print("Sequencia gerada: ");
     for(byte i=0; i < SequenceLength; i++){
       Serial.print(geniusSequence[i]);
       Serial.print(" ");
@@ -88,7 +89,7 @@ void sequence_generate(){
   bool compare_sequence(int level){
     int pressed;
     bool error;
-    unsigned long duration = 50000;
+    unsigned long duration = 5000;
     play_screen('p', level);
     //delay(200);
     Serial.print("Nivel: ");

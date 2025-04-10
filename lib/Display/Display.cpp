@@ -127,7 +127,7 @@ void game_over_screen(int level){
 void Congratulation(){
     define_display();
     
-    const char* words[] = { "Voce", "venceu!", "Parabéns!"};
+    const char* words[] = { "Voce", "venceu!", "Parabens!"};
     int textLen = 2;
     int lineHeight = 8 * textLen;
 
@@ -144,4 +144,5 @@ void Congratulation(){
     }
 
     display.display();
+    delay(2000);
 }

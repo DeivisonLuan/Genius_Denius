@@ -30,7 +30,6 @@ void setup() {
   // Inicializa o I2C com seus pinos personalizados (SDA, SCL)
   Wire.begin(8, 9); // GPIO8 = SDA, GPIO9 = SCL
   Initial_screen();
-  delay(2000);
   Start_screen();
 
   Serial.begin(115200);
@@ -63,6 +62,8 @@ void loop() {
       }
       if(level == SequenceLength){
         Congratulation();
+        i=SequenceLength+2;
+        Start_screen();
       }
     }
   }
