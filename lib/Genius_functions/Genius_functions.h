@@ -8,6 +8,7 @@ const int ledPins[] = {7, 18, 1, 4};
 
 #define baseFreq 1.5
 #define addFreq 0.285
+#define duration 5000
 
 //Definição das notas para cada cor: Vermelho(R), Azul (B), verde (G), Amarelo(Y)
 const int ColorTone[] = {261, 440, 329, 392}; 

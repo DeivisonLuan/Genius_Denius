@@ -37,14 +37,21 @@ void sequence_generate(){
         lastButtonStates[i] = leituraAtual;
       }
       // Se passou o tempo de debounce
-      if ((millis() - lastDebounceTimes[i]) > debounceDelay) {
+      else if ((millis() - lastDebounceTimes[i]) > debounceDelay) {
         if (leituraAtual == LOW) {  // Botão está pressionado
-          blink_led(i,32); //a velocidade do leval mais rapido
-          play_tone(i,32);
+          ledcSetup(0, ColorTone[i], 8);  // freq de cada cor em Hz, resolução de 8 bits
+          ledcAttachPin(BuzzerPin, 0);  // Associa pino ao canal PWM
+          byte time_ms = 75;
+          ledcWrite(0, 127);
+          digitalWrite(ledPins[i], HIGH);
+          delay(time_ms);
+          digitalWrite(ledPins[i], LOW);
+          ledcWrite(0, 0); // Para o som
+          delay(time_ms);
           return i;
         }
       }
-      if (!algumPressionado) {
+      else if (!algumPressionado) {
         ledcWrite(0, 0);  // Silencia buzzer se nenhum botão estável pressionado
       }
       delay(10);  // Suaviza varredura
@@ -65,10 +72,17 @@ void sequence_generate(){
   void genius_turn(int level){
     Serial.println(" || Vez do genius!");
     play_screen('g', level);
-    //delay(200);
+    delay(200);
     for(byte i=0; i<level; i++){
-      play_tone(geniusSequence[i], level);
-      blink_led(geniusSequence[i], level);
+      ledcSetup(0, ColorTone[geniusSequence[i]], 8);  // freq de cada cor em Hz, resolução de 8 bits
+      ledcAttachPin(BuzzerPin, 0);  // Associa pino ao canal PWM
+      int time_ms = frequence(level);
+      ledcWrite(0, 127);
+      digitalWrite(ledPins[geniusSequence[i]], HIGH);
+      delay(time_ms);
+      digitalWrite(ledPins[geniusSequence[i]], LOW);
+      ledcWrite(0, 0); // Para o som
+      delay(time_ms);
     }
   }
   
@@ -78,7 +92,7 @@ void sequence_generate(){
     ledcSetup(0, ColorTone[value], 8);  // freq de cada cor em Hz, resolução de 8 bits
     ledcAttachPin(BuzzerPin, 0);  // Associa pino ao canal PWM
     int time_ms = frequence(level);
-    ledcWrite(0, 255);  
+    ledcWrite(0, 127);  
     delay(time_ms);
     ledcWrite(0, 0); // Para o som
     delay(time_ms);
@@ -89,7 +103,6 @@ void sequence_generate(){
   bool compare_sequence(int level){
     int pressed;
     bool error;
-    unsigned long duration = 5000;
     play_screen('p', level);
     //delay(200);
     Serial.print("Nivel: ");
@@ -97,7 +110,7 @@ void sequence_generate(){
     Serial.print(": ");
 
     for(byte i=0; i<level; i++){
-      error = true; //
+      error = true;
       unsigned long startTime = millis();
       for(byte j=0; (millis() - startTime < duration) && (error == true);j++){
         pressed = read_buttons();

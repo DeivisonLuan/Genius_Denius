@@ -69,5 +69,5 @@ void loop() {
   }
 }
 
-/*Jogo está ok, algumas travadas ainda acontecem se o botão não for pressionado no tempo correto.
+/*Jogo está ok, ainda acontece uma falta de reconhecimento do inicio de jogo se o botão não for pressionado no tempo correto.
 está gerando a sequencia, mostrando de quem é a jogada, a captura do botão tá ok*/
